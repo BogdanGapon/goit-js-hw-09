@@ -8,7 +8,10 @@ const days = document.querySelector('span[data-days]');
 const hours = document.querySelector('span[data-hours]');
 const minutes = document.querySelector('span[data-minutes]');
 const seconds = document.querySelector('span[data-seconds]');
+const DELAY = 1000;
 let differenceInTime = null;
+let chosedTime = null;
+
 btn.disabled = true;
 
 const options = {
@@ -17,36 +20,34 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    const chosedTime = selectedDates[0];
+    chosedTime = selectedDates[0];
     differenceInTime = chosedTime - new Date();
 
     if (differenceInTime < 0) {
-      Notify.failure('Please choose a date in the future', () => {}, {
-        position: 'center-center',
-        closeButton: true,
-      });
+      youChoseDateInThePast();
     } else if (differenceInTime > 0) {
       btn.disabled = false;
-      btn.addEventListener('click', () => {
-        const interval = setInterval(() => {
-          const newDate = new Date();
-          const differencesBetweenFutureTimeAndNow = convertMs(
-            chosedTime - newDate
-          );
-          createTimeTextContent(differencesBetweenFutureTimeAndNow);
-          if (
-            days.textContent === '00' &&
-            hours.textContent === '00' &&
-            minutes.textContent === '00' &&
-            seconds.textContent === '00'
-          ) {
-            clearInterval(interval);
-          }
-        }, 1000);
-      });
     }
   },
 };
+
+btn.addEventListener('click', () => {
+  const interval = setInterval(() => {
+    const newDate = new Date();
+    const differencesBetweenFutureTimeAndNow = convertMs(chosedTime - newDate);
+    // differencesBetweenFutureTimeAndNow это объект который нужно добавить как textContent на страницу
+    createTimeTextContent(differencesBetweenFutureTimeAndNow);
+    if (
+      days.textContent === '00' &&
+      hours.textContent === '00' &&
+      minutes.textContent === '00' &&
+      seconds.textContent === '00'
+    ) {
+      clearInterval(interval);
+      // проверка на то, что когда счетчик равен 00:00:00:00 то интервал очищается и счетчик останавливается
+    }
+  }, DELAY);
+});
 
 flatpickr(input, options);
 
@@ -82,3 +83,12 @@ function createTimeTextContent(time) {
   minutes.textContent = time.minutes;
   seconds.textContent = time.seconds;
 }
+
+function youChoseDateInThePast() {
+  Notify.failure('Please choose a date in the future', () => {}, {
+    position: 'center-center',
+    closeButton: true,
+  });
+}
+
+const timer = document.querySelector('.timer');

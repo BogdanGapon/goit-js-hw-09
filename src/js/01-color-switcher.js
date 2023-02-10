@@ -10,17 +10,19 @@ const DELAY = 1000;
 let changingColor = null;
 btnStop.disabled = true;
 
-body.addEventListener('click', onIntervalChangingBodyColor);
-function onIntervalChangingBodyColor(evt) {
-  if (evt.target === btnOpen) {
-    changingColor = setInterval(changeBodyColor, DELAY);
-    btnOpen.disabled = true;
-    btnStop.disabled = false;
-  } else if (evt.target === btnStop) {
-    clearInterval(changingColor);
-    btnOpen.disabled = false;
-    btnStop.disabled = true;
-  }
+btnOpen.addEventListener('click', onStartBodyColorChanging);
+btnStop.addEventListener('click', onStopBodyColorChanging);
+
+function onStartBodyColorChanging() {
+  changingColor = setInterval(changeBodyColor, DELAY);
+  btnOpen.disabled = true;
+  btnStop.disabled = false;
+}
+
+function onStopBodyColorChanging() {
+  clearInterval(changingColor);
+  btnOpen.disabled = false;
+  btnStop.disabled = true;
 }
 
 function changeBodyColor() {
